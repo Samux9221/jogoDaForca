@@ -15,7 +15,16 @@
         android:layout_margin="15dp"
         android:layout_weight="0.25"
         android:background="@drawable/borda"
-        android:orientation="horizontal"></LinearLayout>
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/forca_0_9" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -62,7 +71,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/id1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
@@ -72,7 +81,7 @@
                 android:text="k" />
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/id2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
@@ -82,7 +91,7 @@
                 android:text="k" />
 
             <Button
-                android:id="@+id/button4"
+                android:id="@+id/id3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
@@ -92,7 +101,7 @@
                 android:text="k" />
 
             <Button
-                android:id="@+id/button5"
+                android:id="@+id/id4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
@@ -102,7 +111,7 @@
                 android:text="k" />
 
             <Button
-                android:id="@+id/button6"
+                android:id="@+id/id5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
@@ -120,7 +129,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button7"
+                android:id="@+id/id6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
@@ -130,7 +139,7 @@
                 android:text="k" />
 
             <Button
-                android:id="@+id/button8"
+                android:id="@+id/id7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
@@ -140,7 +149,7 @@
                 android:text="k" />
 
             <Button
-                android:id="@+id/button9"
+                android:id="@+id/id8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
@@ -150,7 +159,7 @@
                 android:text="k" />
 
             <Button
-                android:id="@+id/button10"
+                android:id="@+id/id9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
@@ -160,65 +169,7 @@
                 android:text="k" />
 
             <Button
-                android:id="@+id/button11"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_weight="1"
-                android:backgroundTint="#FF9800"
-                android:text="k" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.2"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/button12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_weight="1"
-                android:backgroundTint="#FF9800"
-                android:text="k" />
-
-            <Button
-                android:id="@+id/button13"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_weight="1"
-                android:backgroundTint="#FF9800"
-                android:text="k" />
-
-            <Button
-                android:id="@+id/button14"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_weight="1"
-                android:backgroundTint="#FF9800"
-                android:text="k" />
-
-            <Button
-                android:id="@+id/button15"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_weight="1"
-                android:backgroundTint="#FF9800"
-                android:text="k" />
-
-            <Button
-                android:id="@+id/button16"
+                android:id="@+id/id10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
@@ -236,7 +187,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button18"
+                android:id="@+id/id11"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
@@ -246,7 +197,7 @@
                 android:text="k" />
 
             <Button
-                android:id="@+id/button19"
+                android:id="@+id/id12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
@@ -256,7 +207,7 @@
                 android:text="k" />
 
             <Button
-                android:id="@+id/button20"
+                android:id="@+id/id13"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
@@ -266,7 +217,7 @@
                 android:text="k" />
 
             <Button
-                android:id="@+id/button21"
+                android:id="@+id/id14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
@@ -276,7 +227,7 @@
                 android:text="k" />
 
             <Button
-                android:id="@+id/button22"
+                android:id="@+id/id15"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
@@ -294,7 +245,65 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button23"
+                android:id="@+id/id16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="#FF9800"
+                android:text="k" />
+
+            <Button
+                android:id="@+id/id17"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="#FF9800"
+                android:text="k" />
+
+            <Button
+                android:id="@+id/id18"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="#FF9800"
+                android:text="k" />
+
+            <Button
+                android:id="@+id/id19"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="#FF9800"
+                android:text="k" />
+
+            <Button
+                android:id="@+id/id20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="#FF9800"
+                android:text="k" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/id21"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
@@ -304,7 +313,7 @@
                 android:text="k" />
 
             <Button
-                android:id="@+id/button24"
+                android:id="@+id/id22"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
@@ -314,7 +323,7 @@
                 android:text="k" />
 
             <Button
-                android:id="@+id/button25"
+                android:id="@+id/id23"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
@@ -324,7 +333,7 @@
                 android:text="k" />
 
             <Button
-                android:id="@+id/button26"
+                android:id="@+id/id24"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
@@ -334,7 +343,7 @@
                 android:text="k" />
 
             <Button
-                android:id="@+id/button27"
+                android:id="@+id/id25"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
@@ -344,7 +353,7 @@
                 android:text="k" />
 
             <Button
-                android:id="@+id/button28"
+                android:id="@+id/id26"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
