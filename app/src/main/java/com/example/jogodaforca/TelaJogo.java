@@ -22,7 +22,6 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
     private ArrayList<Integer> listaImagens, listaIdsButtons;
     private ArrayList<String> listaPalavras;
     private int indiceListaImagens;
-    private Button b1;
     private TextView texto;
     private String palavra;
     private char[] estado;
@@ -40,7 +39,6 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
 
         //ligando imagem de forca do primeiro layout e da segunda tela
         imagem = findViewById(R.id.imageView);
-        b1 = findViewById(R.id.id1);
 
         indiceListaImagens = 0;
         listaImagens = new ArrayList<Integer>(); //instanciando o arrayList, é necessário
@@ -69,8 +67,6 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
         listaImagens.add(R.drawable.forca_8_9);
         listaImagens.add(R.drawable.forca_9_9);
         listaImagens.add(R.drawable.forca_10_9);
-
-        b1.setOnClickListener(this);
 
         texto = findViewById(R.id.textView3);
 
@@ -108,6 +104,7 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
             Button b = findViewById(listaIdsButtons.get(j));
             b.setOnClickListener(this);
         }
+        iniciarJogo();
     }
 
     //metodo de sorteioDasPalavras
@@ -139,7 +136,6 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
         temporaria = "";
 
         for (int i = 0; i < estado.length; i++){
-
            temporaria += estado[i] + " "; //estado tem somente os "_", vamos percorrer e ir adicionar espaço
         }
 
@@ -152,9 +148,33 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
         indiceListaImagens++;
     }
 
+    public void verificaLetra(char c){
+        boolean status = false;
+
+        for(int i = 0; i < palavra.length(); i++){
+            if(palavra.charAt(i)==c){
+                status = true;
+                estado[i] = c;
+            }
+        }
+
+        //se errar enforco
+        if(!status){
+            atualizaForca();
+        }
+
+        //se acertar atualizo
+        else{
+            atualizaTexto();
+        }
+    }
+
     @Override
     public void onClick(View v) {
-        Button b = (Button) v; //aqui entre parentese (Button) estamos fazneod um casting, forçando e dizendo que o View que é passado para o metodo onClick sempre será um button
-        texto.setText(b.getText().toString()); //alterando o texto de acordo com o conteudo Text de cada button
+        Button b = (Button) v; //aqui entre parentese (Button) estamos faznedo um casting, forçando e dizendo que o View que é passado para o metodo onClick sempre será um button
+
+        //tenho que passar como parametro char
+        verificaLetra(b.getText().toString().charAt(0));
+        b.setEnabled(false);
     }
 }
