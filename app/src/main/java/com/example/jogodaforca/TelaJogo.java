@@ -1,5 +1,8 @@
 package com.example.jogodaforca;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -21,11 +24,12 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
     private ImageView imagem;
     private ArrayList<Integer> listaImagens, listaIdsButtons;
     private ArrayList<String> listaPalavras;
-    private int indiceListaImagens;
-    private TextView texto;
+    private int indiceListaImagens, contaErro, contaAcerto;
+    private TextView texto, textAcertos, textErros;
     private String palavra;
     private char[] estado;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +72,13 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
         listaImagens.add(R.drawable.forca_9_9);
         listaImagens.add(R.drawable.forca_10_9);
 
+        contaErro = 0;
+        contaAcerto = 0;
+
         texto = findViewById(R.id.textView3);
+
+        textAcertos = findViewById(R.id.textAcertos);
+        textErros = findViewById(R.id.textErros);
 
         //inicializando a lista de Ids de button e adicionando na lista a referencia de numero inteiro da classe R de cada um dos buttons
         listaIdsButtons = new ArrayList<Integer>();
@@ -103,6 +113,8 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
         for(int j = 0; j < listaIdsButtons.size(); j++){
             Button b = findViewById(listaIdsButtons.get(j));
             b.setOnClickListener(this);
+            b.setEnabled(true);
+
         }
         iniciarJogo();
     }
@@ -118,8 +130,21 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
 
     //metodo de iniciar jogo
     public void iniciarJogo(){
+        //percorrendo toda a lista de Ids e tornando eles sensiveis ao toque
+        for(int j = 0; j < listaIdsButtons.size(); j++){
+            Button b = findViewById(listaIdsButtons.get(j));
+            b.setEnabled(true);
+
+        }
+
         imagem.setImageResource(R.drawable.forca_0_9); //voltando a imagem para oadrão inicial
         palavra = sorteiaPalavra();
+
+        contaErro = 0;
+        contaAcerto = 0;
+        //zerando as informações de jogadas di display
+        textAcertos.setText(Integer.toString(contaAcerto));
+        textErros.setText(Integer.toString(contaErro) + "/" + Integer.toString(listaImagens.size()));
 
         estado = new char[palavra.length()]; //inicializando o vetor com a quantidade de caracteres da palavra sorteada
 
@@ -131,6 +156,49 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
         atualizaTexto();
     }
 
+    public void verificaSeTerminou(){
+        boolean verifica = false;
+
+        for(int i = 0; i < estado.length; i++){
+            if(estado[i] == '_'){
+                //se der true, é porque ainda tem jogo - falta uma jogada
+                verifica = true;
+            }
+        }
+
+        //se verifica estiver false, jogo ganho
+        if(!verifica){
+            //instanciando a caixa com mensagem para o usuário
+            AlertDialog.Builder caixa = new AlertDialog.Builder(this);
+
+            caixa.setTitle("Você Venceeeeu!!!");
+            caixa.setMessage("Deseja jogar novamente?");
+            caixa.setPositiveButton("Jogar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    iniciarJogo();
+                }
+            });
+            caixa.show();
+        }
+
+        if(contaErro >= listaImagens.size()){
+            //instanciando a caixa com mensagem para o usuário
+            AlertDialog.Builder caixa = new AlertDialog.Builder(this);
+
+            caixa.setTitle("Você perdeu, playboy!!!");
+            caixa.setMessage("Deseja jogar novamente?");
+            caixa.setPositiveButton("Jogar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    iniciarJogo();
+                }
+            });
+            caixa.show();
+        }
+    }
+
+    //esse metodo serve para formatar os "_" e deixá-los organizados
     public void atualizaTexto(){
         String temporaria = new String();
         temporaria = "";
@@ -144,7 +212,6 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
 
     public void atualizaForca(){
         imagem.setImageResource(listaImagens.get(indiceListaImagens));
-
         indiceListaImagens++;
     }
 
@@ -161,12 +228,17 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
         //se errar enforco
         if(!status){
             atualizaForca();
+            contaErro++;
+            textErros.setText(Integer.toString(contaErro) + "/" + Integer.toString(listaImagens.size()));
         }
 
         //se acertar atualizo
         else{
             atualizaTexto();
+            contaAcerto++;
+            textAcertos.setText(Integer.toString(contaAcerto));
         }
+        verificaSeTerminou();
     }
 
     @Override
