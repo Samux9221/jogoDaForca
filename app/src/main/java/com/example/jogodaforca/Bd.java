@@ -49,7 +49,7 @@ public class Bd extends SQLiteOpenHelper {
         ArrayList<Palavra> lista = new ArrayList<Palavra>();
         SQLiteDatabase db = getReadableDatabase(); //pegando permissão para manipular o banco de dados, nesse caso, para leitura
         Cursor cursor = db.query("tabelaPalavra", null, null, null, null, null, null);
-        while(cursor.moverToNext()){
+        while(cursor.moveToNext()){
             String palavra = cursor.getString(cursor.getColumnIndexOrThrow("palavra"));
             String categoria = cursor.getString(cursor.getColumnIndexOrThrow("categoria"));
 
