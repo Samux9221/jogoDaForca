@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class Adaptador extends RecyclerView.Adapter<RecyHolder> {
-    //essa classe adaptador vai ser o adaptador do RecycleView para com o layout, vai juntar tudo
+    //essa classe adaptador vai ser o adaptador do RecycleView para com o layout que criamos (layout.xml), vai juntar tudo
 
     private ArrayList<Palavra> lista;
     @NonNull
@@ -24,13 +24,19 @@ public class Adaptador extends RecyclerView.Adapter<RecyHolder> {
         return new RecyHolder(view);
     }
 
+    public Adaptador(ArrayList<Palavra> lista){
+        this.lista = lista;
+    }
+
     @Override
     public void onBindViewHolder(@NonNull RecyHolder holder, int position) {
+        holder.txPalavra.setText(lista.get(position).getPalavraDigitada());
+        holder.txCategoria.setText(lista.get(position).getCategoria());
 
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return lista.size();
     }
 }

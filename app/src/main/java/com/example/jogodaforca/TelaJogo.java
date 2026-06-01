@@ -245,8 +245,11 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
     public void onClick(View v) {
         Button b = (Button) v; //aqui entre parentese (Button) estamos faznedo um casting, forçando e dizendo que o View que é passado para o metodo onClick sempre será um button
 
+        //toUpperCase() coloca em caixa alta a letra do teclado
+        char letraApertada = b.getText().toString().toUpperCase().charAt(0);
+
         //tenho que passar como parametro char
-        verificaLetra(b.getText().toString().charAt(0));
+        verificaLetra(letraApertada);
         b.setEnabled(false);
     }
 }

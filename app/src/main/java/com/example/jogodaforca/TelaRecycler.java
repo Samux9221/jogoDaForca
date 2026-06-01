@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class TelaRecycler extends AppCompatActivity {
 
     private RecyclerView recyclerView;
+    private Bd bd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +26,9 @@ public class TelaRecycler extends AppCompatActivity {
             return insets;
         });
 
+        bd = new Bd(TelaRecycler.this);
+        Adaptador adaptador = new Adaptador(bd.listarPalavras());
+
         //mapeando nosso recycler
         recyclerView = findViewById(R.id.id_recycler);
 
@@ -32,5 +36,6 @@ public class TelaRecycler extends AppCompatActivity {
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(true); //tamanho fixo para todos
+        recyclerView.setAdapter(adaptador);
     }
 }

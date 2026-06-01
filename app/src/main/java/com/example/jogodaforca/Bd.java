@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class Bd extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 0;
+    private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "banco.db";
 
     //esse contexto do parametro é o contexto da activy do frontend que estaremos passando para o COnstrutor

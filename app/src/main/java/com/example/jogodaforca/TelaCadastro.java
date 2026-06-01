@@ -1,5 +1,6 @@
 package com.example.jogodaforca;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -87,10 +88,12 @@ public class TelaCadastro extends AppCompatActivity implements View.OnClickListe
                 Palavra palavra1 = new Palavra();
                 palavra1.setPalavraDigitada(texto);
                 bd.salvarPalavra(palavra1);
+                palavraDigitada.setText("");
+                Toast.makeText(this, "Salvo", Toast.LENGTH_SHORT);
             }
         }
         if(v == btnListar){
-
+            startActivity(new Intent(this, TelaRecycler.class));
         }
     }
 
