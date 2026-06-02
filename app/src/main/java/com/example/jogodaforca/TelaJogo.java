@@ -3,6 +3,7 @@ package com.example.jogodaforca;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -23,11 +24,13 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
 
     private ImageView imagem;
     private ArrayList<Integer> listaImagens, listaIdsButtons;
-    private ArrayList<String> listaPalavras;
+    private ArrayList<Palavra> listaPalavras;
     private int indiceListaImagens, contaErro, contaAcerto;
     private TextView texto, textAcertos, textErros;
     private String palavra;
     private char[] estado;
+
+    private Bd bancoDeDados;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -45,20 +48,18 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
         imagem = findViewById(R.id.imageView);
 
         indiceListaImagens = 0;
-        listaImagens = new ArrayList<Integer>(); //instanciando o arrayList, é necessário
-        listaPalavras = new ArrayList<String>();
 
-        //alimentando palavras para o ArrayList
-        listaPalavras.add("BANANA");
-        listaPalavras.add("BOLA");
-        listaPalavras.add("CASA");
-        listaPalavras.add("IGREJA");
-        listaPalavras.add("ESCOLA");
-        listaPalavras.add("INSTITUTO");
-        listaPalavras.add("CIDADE");
-        listaPalavras.add("ESTADO");
-        listaPalavras.add("SENTIMENTO");
-        listaPalavras.add("ASFALTO");
+        listaImagens = new ArrayList<Integer>(); //instanciando o arrayList, é necessário
+
+        /* --- --- */
+
+        listaPalavras = new ArrayList<Palavra>();
+
+        Bd bancoDeDados = new Bd(this);
+
+        listaPalavras = bancoDeDados.listarPalavras();
+
+        /* ---  --- */
 
         //alimentando as imagens na lista de imagens, em ordem logica e sequancial
         listaImagens.add(R.drawable.forca_1_9);
@@ -125,7 +126,7 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
         //embaralhando a lista, não sabemos mais a ordem
         Collections.shuffle(listaPalavras);
 
-        return listaPalavras.get(0);
+        return listaPalavras.get(0).getPalavraDigitada().toUpperCase(); //garantindo que a palavra sorteada esteja com letra maiúscula
     }
 
     //metodo de iniciar jogo
@@ -135,6 +136,43 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
             Button b = findViewById(listaIdsButtons.get(j));
             b.setEnabled(true);
 
+        }
+
+
+        // Verifica se o banco retornou vazio
+        if (listaPalavras.isEmpty()) {
+
+            AlertDialog.Builder caixa = new AlertDialog.Builder(this);
+
+            caixa.setTitle("Nenhuma palavra sua!");
+            caixa.setMessage("Vamos usar algumas palavras padrão para você brincar agora.\n\nPara personalizar o jogo, vá em: Tela Inicial ➔ Configurações ➔ Cadastrar Palavra.");
+
+            // O botão agora convida para jogar com o padrão
+            caixa.setPositiveButton("Jogar com Padrão", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    // 1. Adicionamos as palavras "de brinde" na lista
+                    Palavra p1 = new Palavra();
+                    p1.setPalavraDigitada("BANANA");
+
+                    Palavra p2 = new Palavra();
+                    p2.setPalavraDigitada("COMPUTADOR");
+
+                    listaPalavras.add(p1);
+                    listaPalavras.add(p2);
+
+                    // 2. Iniciamos o jogo (ele já vai embaralhar e sortear dentro desse método)
+                    iniciarJogo();
+                }
+            });
+
+            caixa.setCancelable(false);
+            caixa.show();
+
+        } else {
+            // Se a lista NÃO estiver vazia (já tem palavras do banco), apenas inicia o jogo normal
+            iniciarJogo();
         }
 
         imagem.setImageResource(R.drawable.forca_0_9); //voltando a imagem para oadrão inicial

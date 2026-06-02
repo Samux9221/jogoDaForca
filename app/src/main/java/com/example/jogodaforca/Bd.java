@@ -23,12 +23,14 @@ public class Bd extends SQLiteOpenHelper {
                 "CREATE TABLE IF NOT EXISTS tabelaPalavra (" +
                         "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                         "palavra TEXT," +
-                        "categoria TEXT)"
+                        "categoria TEXT," +
+                        "dica TEXT," +
+                        "nivel INTEGER)"
 
         );
     }
 
-    //vamos receber como parametro a classe Pavara de criamos e pegar as informações dele para jogar ao banco de dados
+    //vamos receber como parametro a classe Palavra que criamos e pegar as informações dele para jogar ao banco de dados
     public void salvarPalavra(Palavra p){
         SQLiteDatabase db = getWritableDatabase(); //pegando permissão para manipular o banco de dados, nesse caso, escrever
 
@@ -49,6 +51,8 @@ public class Bd extends SQLiteOpenHelper {
         ArrayList<Palavra> lista = new ArrayList<Palavra>();
         SQLiteDatabase db = getReadableDatabase(); //pegando permissão para manipular o banco de dados, nesse caso, para leitura
         Cursor cursor = db.query("tabelaPalavra", null, null, null, null, null, null);
+
+        //enquanto houver uma próxima linha no Banco de Dados...
         while(cursor.moveToNext()){
             String palavra = cursor.getString(cursor.getColumnIndexOrThrow("palavra"));
             String categoria = cursor.getString(cursor.getColumnIndexOrThrow("categoria"));

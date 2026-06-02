@@ -97,6 +97,14 @@ public class TelaCadastro extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    public void calcularNivel(EditText palavra){
+        String palavraFornecida = palavra.getText().toString();
+
+        while(int i = 0; i < palavraFornecida.length(); i++){
+
+        }
+    }
+
     @Override
     public void onCheckedChanged(@NonNull RadioGroup group, int checkedId) {
         if(group == grupo){
