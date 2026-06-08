@@ -68,6 +68,17 @@ public class Bd extends SQLiteOpenHelper {
         return lista;
     }
 
+    public void limparTodasAsPalavras() {
+        // Abre o banco de dados em modo de escrita
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Alerte: mude "tabela_palavras" para o nome REAL da sua tabela no banco
+        db.delete("tabelaPalavra", null, null);
+
+        // Fecha o banco de dados
+        db.close();
+    }
+
     //esse metodo onUpgrade serve alterarmos o banco de dados (sua estrutura) depois de já estar criado, usaremos esse metodo
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

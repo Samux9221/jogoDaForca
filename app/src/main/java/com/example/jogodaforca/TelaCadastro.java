@@ -1,5 +1,7 @@
 package com.example.jogodaforca;
 
+import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -18,11 +21,14 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class TelaCadastro extends AppCompatActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
-    private EditText palavraDigitada;
-    private Button btnCadastrar, btnListar;
+    private EditText palavraDigitada, dicaDigitada;
+    private Button btnCadastrar, btnListar, btnExcluir;
     private RadioGroup grupo;
     private String categoriaSelecionada, palavra;
     private Bd bd;
+
+    private int nivelDificuldade;
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,10 +41,14 @@ public class TelaCadastro extends AppCompatActivity implements View.OnClickListe
         });
 
         palavraDigitada = findViewById(R.id.textPalavra);
+        dicaDigitada = findViewById(R.id.textDica);
 
         //referenciando ao layout e já tornando sensivel ao toque
         btnCadastrar = findViewById(R.id.button2);
         btnCadastrar.setOnClickListener(this);
+
+        btnExcluir = findViewById(R.id.button5);
+        btnExcluir.setOnClickListener(this);
 
         //referenciando ao layout e já tornando sensivel ao toque
         btnListar = findViewById(R.id.button3);
@@ -83,25 +93,59 @@ public class TelaCadastro extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(this, "Faltou marcar categoria, leso", Toast.LENGTH_SHORT).show();
             }
 
-            if(temTextoDigitado && temRadioChecado){
-                //aqui pode salvar no dp, já verficamos se a categoria e texto foram digitados ou selecionados
+            if (temTextoDigitado && temRadioChecado) {
                 Palavra palavra1 = new Palavra();
                 palavra1.setPalavraDigitada(texto);
+
+                palavra1.setDica(dicaDigitada.getText().toString());
+
+                // 1. Calcula o nível passando a string digitada
+                int nivel = calcularNivel(texto);
+
+                palavra1.setNivel(nivel);
+
+                // Se a sua classe Palavra também salvar a categoria, não esqueça de setar ela aqui!
+                // palavra1.setCategoria(categoriaSelecionada);
+
                 bd.salvarPalavra(palavra1);
+
                 palavraDigitada.setText("");
-                Toast.makeText(this, "Salvo", Toast.LENGTH_SHORT);
+
+                // Um detalhe: faltou o .show() no seu código original para o Toast aparecer!
+                Toast.makeText(this, "Salvo com sucesso!", Toast.LENGTH_SHORT).show();
             }
         }
         if(v == btnListar){
             startActivity(new Intent(this, TelaRecycler.class));
         }
+
+        /*if(v == btnExcluir){
+            new AlertDialog.Builder(this)
+                    .setTitle("Atenção!")
+                    .setMessage("Tem certeza que deseja apagar todas as palavras cadastradas? Isso não pode ser desfeito.")
+                    .setPositiveButton("Sim, apagar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Executa a limpeza se ele confirmar
+                            bd.limparTodasAsPalavras();
+                            listaPalavras.clear();
+                            iniciarJogo();
+                        }
+                    })
+                    .setNegativeButton("Cancelar", null)
+                    .show();
+        }*/
     }
 
-    public void calcularNivel(EditText palavra){
-        String palavraFornecida = palavra.getText().toString();
+    public int calcularNivel(String palavraFornecida) {
+        int tamanho = palavraFornecida.length();
 
-        while(int i = 0; i < palavraFornecida.length(); i++){
-
+        if (tamanho > 0 && tamanho <= 4) {
+            return 1; // Fácil (Até 4 letras)
+        } else if (tamanho >= 5 && tamanho <= 7) {
+            return 2; // Médio (5 a 7 letras)
+        } else {
+            return 3; // Difícil (8 ou mais letras)
         }
     }
 

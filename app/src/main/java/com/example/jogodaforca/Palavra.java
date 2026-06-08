@@ -28,7 +28,7 @@ public class Palavra {
         this.dica = dica;
     }
 
-    public int nivel(){
+    public int getNivel(){
         return nivel;
     }
 

@@ -26,7 +26,7 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
     private ArrayList<Integer> listaImagens, listaIdsButtons;
     private ArrayList<Palavra> listaPalavras;
     private int indiceListaImagens, contaErro, contaAcerto;
-    private TextView texto, textAcertos, textErros;
+    private TextView texto, textAcertos, textErros, textNivel;
     private String palavra;
     private char[] estado;
 
@@ -80,6 +80,7 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
 
         textAcertos = findViewById(R.id.textAcertos);
         textErros = findViewById(R.id.textErros);
+        textNivel = findViewById(R.id.textView10);
 
         //inicializando a lista de Ids de button e adicionando na lista a referencia de numero inteiro da classe R de cada um dos buttons
         listaIdsButtons = new ArrayList<Integer>();
@@ -130,29 +131,23 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
     }
 
     //metodo de iniciar jogo
+    //metodo de iniciar jogo
     public void iniciarJogo(){
         //percorrendo toda a lista de Ids e tornando eles sensiveis ao toque
         for(int j = 0; j < listaIdsButtons.size(); j++){
             Button b = findViewById(listaIdsButtons.get(j));
             b.setEnabled(true);
-
         }
 
-
-        // Verifica se o banco retornou vazio
+        // 1. CORREÇÃO: Se estiver vazio, mostra o alerta e PARA o código aqui com o 'return'
         if (listaPalavras.isEmpty()) {
-
             AlertDialog.Builder caixa = new AlertDialog.Builder(this);
-
             caixa.setTitle("Nenhuma palavra sua!");
             caixa.setMessage("Vamos usar algumas palavras padrão para você brincar agora.\n\nPara personalizar o jogo, vá em: Tela Inicial ➔ Configurações ➔ Cadastrar Palavra.");
 
-            // O botão agora convida para jogar com o padrão
             caixa.setPositiveButton("Jogar com Padrão", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-
-                    // 1. Adicionamos as palavras "de brinde" na lista
                     Palavra p1 = new Palavra();
                     p1.setPalavraDigitada("BANANA");
 
@@ -162,27 +157,32 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
                     listaPalavras.add(p1);
                     listaPalavras.add(p2);
 
-                    // 2. Iniciamos o jogo (ele já vai embaralhar e sortear dentro desse método)
+                    // Agora que a lista foi preenchida, chama o iniciarJogo de verdade
                     iniciarJogo();
                 }
             });
 
             caixa.setCancelable(false);
             caixa.show();
-
-        } else {
-            // Se a lista NÃO estiver vazia (já tem palavras do banco), apenas inicia o jogo normal
-            iniciarJogo();
+            return; // IMPORTANTE: Impede o código de continuar para as linhas de baixo antes da hora!
         }
 
-        imagem.setImageResource(R.drawable.forca_0_9); //voltando a imagem para oadrão inicial
+        // O BLOCO 'ELSE' FOI REMOVIDO DAQUI!
+        // Se o código chegou até aqui, significa que a lista NÃO está vazia.
+
+        // 2. CORREÇÃO: Resetando o índice das imagens para a próxima partida funcionar
+        indiceListaImagens = 0;
+
+        imagem.setImageResource(R.drawable.forca_0_9); //voltando a imagem para o padrão inicial
         palavra = sorteiaPalavra();
 
         contaErro = 0;
         contaAcerto = 0;
-        //zerando as informações de jogadas di display
+
+        //zerando as informações de jogadas no display
         textAcertos.setText(Integer.toString(contaAcerto));
         textErros.setText(Integer.toString(contaErro) + "/" + Integer.toString(listaImagens.size()));
+        textNivel.setText("Nivel " + listaPalavras.get(0).getNivel());
 
         estado = new char[palavra.length()]; //inicializando o vetor com a quantidade de caracteres da palavra sorteada
 
