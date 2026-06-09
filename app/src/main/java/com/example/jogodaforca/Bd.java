@@ -10,15 +10,18 @@ import java.util.ArrayList;
 
 public class Bd extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    // CORREÇÃO: Versão alterada para 2 para forçar o Android a reconstruir a tabela com as novas colunas
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "banco.db";
 
-    //esse contexto do parametro é o contexto da activy do frontend que estaremos passando para o COnstrutor
+    // Construtor que recebe o contexto da Activity
     public Bd(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // Criação da tabela oficial com TODAS as colunas necessárias
         db.execSQL(
                 "CREATE TABLE IF NOT EXISTS tabelaPalavra (" +
                         "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -26,40 +29,41 @@ public class Bd extends SQLiteOpenHelper {
                         "categoria TEXT," +
                         "dica TEXT," +
                         "nivel INTEGER)"
-
         );
     }
 
-    //vamos receber como parametro a classe Palavra que criamos e pegar as informações dele para jogar ao banco de dados
     public void salvarPalavra(Palavra p){
-        SQLiteDatabase db = getWritableDatabase(); //pegando permissão para manipular o banco de dados, nesse caso, escrever
-
-        //"array" responsavel por organizar um determinado conteudo de acordo com a sua coluna no BD
+        SQLiteDatabase db = getWritableDatabase(); // Permissão para escrita
         ContentValues valores = new ContentValues();
 
-        //atribuindo os valores da minha classe para o DB
         valores.put("palavra", p.getPalavraDigitada());
         valores.put("categoria", p.getCategoria());
+        valores.put("dica", p.getDica());     // Salva a dica de verdade
+        valores.put("nivel", p.getNivel());   // Salva o nível de verdade
 
-        //inserindo oficialmente
         db.insert("tabelaPalavra", null, valores);
-
         db.close();
     }
 
     public ArrayList<Palavra> listarPalavras(){
         ArrayList<Palavra> lista = new ArrayList<Palavra>();
-        SQLiteDatabase db = getReadableDatabase(); //pegando permissão para manipular o banco de dados, nesse caso, para leitura
+        SQLiteDatabase db = getReadableDatabase(); // Permissão para leitura
         Cursor cursor = db.query("tabelaPalavra", null, null, null, null, null, null);
 
-        //enquanto houver uma próxima linha no Banco de Dados...
+        // Enquanto houver registros no banco de dados...
         while(cursor.moveToNext()){
             String palavra = cursor.getString(cursor.getColumnIndexOrThrow("palavra"));
             String categoria = cursor.getString(cursor.getColumnIndexOrThrow("categoria"));
+            String dica = cursor.getString(cursor.getColumnIndexOrThrow("dica"));
+            int nivel = cursor.getInt(cursor.getColumnIndexOrThrow("nivel"));
 
+            // Montando o objeto Palavra com as informações vindas do banco
             Palavra p = new Palavra();
             p.setPalavraDigitada(palavra);
             p.setCategoria(categoria);
+            p.setDica(dica);
+            p.setNivel(nivel);
+
             lista.add(p);
         }
 
@@ -68,20 +72,16 @@ public class Bd extends SQLiteOpenHelper {
         return lista;
     }
 
+    // Metodo para apagar todo o banco de dados (Botao Excluir da Tela de Cadastro)
     public void limparTodasAsPalavras() {
-        // Abre o banco de dados em modo de escrita
         SQLiteDatabase db = this.getWritableDatabase();
-
-        // Alerte: mude "tabela_palavras" para o nome REAL da sua tabela no banco
         db.delete("tabelaPalavra", null, null);
-
-        // Fecha o banco de dados
         db.close();
     }
 
-    //esse metodo onUpgrade serve alterarmos o banco de dados (sua estrutura) depois de já estar criado, usaremos esse metodo
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL("DROP TABLE IF EXISTS tabelaPalavra");
+        onCreate(db);
     }
 }

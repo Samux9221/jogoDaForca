@@ -20,7 +20,7 @@ public class Palavra {
         this.categoria = categoria;
     }
 
-    public String dica(){
+    public String getDica(){
         return dica;
     }
 

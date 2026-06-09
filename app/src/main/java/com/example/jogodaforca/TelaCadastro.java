@@ -24,10 +24,10 @@ public class TelaCadastro extends AppCompatActivity implements View.OnClickListe
     private EditText palavraDigitada, dicaDigitada;
     private Button btnCadastrar, btnListar, btnExcluir;
     private RadioGroup grupo;
-    private String categoriaSelecionada, palavra;
     private Bd bd;
 
     private int nivelDificuldade;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,98 +43,87 @@ public class TelaCadastro extends AppCompatActivity implements View.OnClickListe
         palavraDigitada = findViewById(R.id.textPalavra);
         dicaDigitada = findViewById(R.id.textDica);
 
-        //referenciando ao layout e já tornando sensivel ao toque
         btnCadastrar = findViewById(R.id.button2);
         btnCadastrar.setOnClickListener(this);
 
         btnExcluir = findViewById(R.id.button5);
         btnExcluir.setOnClickListener(this);
 
-        //referenciando ao layout e já tornando sensivel ao toque
         btnListar = findViewById(R.id.button3);
         btnListar.setOnClickListener(this);
 
-        //referenciando ao layout e já tornando sensivel ao toque (nesse caso, tem uma metodo de escutador de evento propio)
         grupo = findViewById(R.id.radioGroup);
         grupo.setOnCheckedChangeListener(this);
 
-        //Tela cadastro tem um construtor que espera um banco de dados, por isso o THIS
         bd = new Bd(TelaCadastro.this);
+    }
+
+    private void caixaConfirmacaoLimpeza() {
+        new AlertDialog.Builder(this)
+                .setTitle("Atenção!")
+                .setMessage("Tem certeza que deseja apagar TODAS as palavras cadastradas? Essa ação não poderá ser desfeita.")
+                .setPositiveButton("Sim, apagar tudo", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        bd.limparTodasAsPalavras();
+                        Toast.makeText(TelaCadastro.this, "Banco de dados limpo com sucesso!", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 
     @Override
     public void onClick(View v) {
-        if(v == btnCadastrar){
-            String texto = palavraDigitada.getText().toString();
+        if (v == btnCadastrar) {
+            String texto = palavraDigitada.getText().toString().trim(); //esse .trim() evita que tenha espaço vazio sem caraceteres
+            String dica = dicaDigitada.getText().toString().trim();
 
-            boolean temTextoDigitado = false;
-
-            //se o texto estiver vazio, esse metodo cuida disso para nós
-            if(texto.isEmpty()){
-                //esse toast coloca um aviso temporario na tela do usuário
+            // 1. Validação do texto da palavra
+            if (texto.isEmpty()) {
                 Toast.makeText(this, "Faltou escrever uma palavra, leso", Toast.LENGTH_SHORT).show();
-            } else{
-                temTextoDigitado = true;
+                return; // Para a execução aqui e não tenta salvar
             }
 
-            RadioButton r = findViewById(R.id.radioButton1);
-            RadioButton r1 = findViewById(R.id.radioButton2);
-            RadioButton r2 = findViewById(R.id.radioButton3);
-            RadioButton r3 = findViewById(R.id.radioButton4);
-            RadioButton r4 = findViewById(R.id.radioButton5);
-
-
-            boolean temRadioChecado = true;
-
-            //verificando se existe alguma categoria selecionada, lembrando que estamos dentro do IF do botão cadastrar
-            if(r.isChecked() || r1.isChecked() || r2.isChecked() || r3.isChecked() || r4.isChecked()){
-                temRadioChecado = true;
-            } else{
+            // 2. Validação da categoria (RadioGroup)
+            int idSelecionado = grupo.getCheckedRadioButtonId(); // Pega o ID do rádio que está marcado
+            if (idSelecionado == -1) { // -1 significa que nenhum rádio está selecionado
                 Toast.makeText(this, "Faltou marcar categoria, leso", Toast.LENGTH_SHORT).show();
+                return; // Para a execução aqui
             }
 
-            if (temTextoDigitado && temRadioChecado) {
-                Palavra palavra1 = new Palavra();
-                palavra1.setPalavraDigitada(texto);
+            // 3. Se passou pelas validações, descobre o texto do RadioButton selecionado
+            RadioButton radioSelecionado = findViewById(idSelecionado);
+            String categoriaSelecionada = radioSelecionado.getText().toString();
 
-                palavra1.setDica(dicaDigitada.getText().toString());
+            // 4. Cria o objeto Palavra e popula com todos os dados corretos
+            Palavra palavra1 = new Palavra();
+            palavra1.setPalavraDigitada(texto);
+            palavra1.setDica(dica);
+            palavra1.setCategoria(categoriaSelecionada); // Agora salvando a categoria dinamicamente!
 
-                // 1. Calcula o nível passando a string digitada
-                int nivel = calcularNivel(texto);
+            // Calcula o nível automaticamente baseado no tamanho
+            int nivel = calcularNivel(texto);
+            palavra1.setNivel(nivel);
 
-                palavra1.setNivel(nivel);
+            // 5. Salva de fato no banco de dados (Apenas UMA vez)
+            bd.salvarPalavra(palavra1);
 
-                // Se a sua classe Palavra também salvar a categoria, não esqueça de setar ela aqui!
-                // palavra1.setCategoria(categoriaSelecionada);
+            // 6. Limpa os campos da tela para o próximo cadastro
+            palavraDigitada.setText("");
+            dicaDigitada.setText("");
+            grupo.clearCheck(); // Desmarca os RadioButtons
 
-                bd.salvarPalavra(palavra1);
-
-                palavraDigitada.setText("");
-
-                // Um detalhe: faltou o .show() no seu código original para o Toast aparecer!
-                Toast.makeText(this, "Salvo com sucesso!", Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(this, "Salvo com sucesso!", Toast.LENGTH_SHORT).show();
         }
-        if(v == btnListar){
+
+        if (v == btnListar) {
             startActivity(new Intent(this, TelaRecycler.class));
         }
 
-        /*if(v == btnExcluir){
-            new AlertDialog.Builder(this)
-                    .setTitle("Atenção!")
-                    .setMessage("Tem certeza que deseja apagar todas as palavras cadastradas? Isso não pode ser desfeito.")
-                    .setPositiveButton("Sim, apagar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Executa a limpeza se ele confirmar
-                            bd.limparTodasAsPalavras();
-                            listaPalavras.clear();
-                            iniciarJogo();
-                        }
-                    })
-                    .setNegativeButton("Cancelar", null)
-                    .show();
-        }*/
+        if (v == btnExcluir) {
+            caixaConfirmacaoLimpeza();
+        }
     }
 
     public int calcularNivel(String palavraFornecida) {
@@ -151,10 +140,9 @@ public class TelaCadastro extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onCheckedChanged(@NonNull RadioGroup group, int checkedId) {
-        if(group == grupo){
-            RadioButton temporario = findViewById(checkedId);//crio localmente um radio button sendo instanciado pelo id que está sendo recebido
-            Toast.makeText(TelaCadastro.this, temporario.getText().toString(),
-                    Toast.LENGTH_SHORT).show();
+        if (group == grupo && checkedId != -1) {
+            RadioButton temporario = findViewById(checkedId);
+            Toast.makeText(TelaCadastro.this, temporario.getText().toString(), Toast.LENGTH_SHORT).show();
         }
     }
 }

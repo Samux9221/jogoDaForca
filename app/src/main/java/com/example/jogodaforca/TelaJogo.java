@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +29,7 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
     private int indiceListaImagens, contaErro, contaAcerto;
     private TextView texto, textAcertos, textErros, textNivel;
     private String palavra;
+    private Button btnDica;
     private char[] estado;
 
     private Bd bancoDeDados;
@@ -75,6 +77,8 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
 
         contaErro = 0;
         contaAcerto = 0;
+
+        btnDica = findViewById(R.id.btnDica);
 
         texto = findViewById(R.id.textView3);
 
@@ -179,6 +183,9 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
         contaErro = 0;
         contaAcerto = 0;
 
+        btnDica.setVisibility(View.INVISIBLE);
+        btnDica.setEnabled(true);
+
         //zerando as informações de jogadas no display
         textAcertos.setText(Integer.toString(contaAcerto));
         textErros.setText(Integer.toString(contaErro) + "/" + Integer.toString(listaImagens.size()));
@@ -268,6 +275,10 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
             atualizaForca();
             contaErro++;
             textErros.setText(Integer.toString(contaErro) + "/" + Integer.toString(listaImagens.size()));
+            if(contaErro >= 2){
+                btnDica.setVisibility(View.VISIBLE);
+                btnDica.setOnClickListener(this);
+            }
         }
 
         //se acertar atualizo
@@ -281,6 +292,19 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
+        if(v == btnDica){
+            //instanciando a caixa com mensagem para o usuário
+            AlertDialog.Builder caixa = new AlertDialog.Builder(this);
+
+            caixa.setTitle("Você recebeu uma dica!!!");
+            caixa.setMessage("A dica para esse mistério é: " + listaPalavras.get(0).getDica());
+            caixa.setNegativeButton("Voltar", null);
+            caixa.show();
+            Toast.makeText(this, "Dica dada, leso", Toast.LENGTH_SHORT).show();
+            return;
+
+        }
+
         Button b = (Button) v; //aqui entre parentese (Button) estamos faznedo um casting, forçando e dizendo que o View que é passado para o metodo onClick sempre será um button
 
         //toUpperCase() coloca em caixa alta a letra do teclado
@@ -289,5 +313,7 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
         //tenho que passar como parametro char
         verificaLetra(letraApertada);
         b.setEnabled(false);
+
+
     }
 }
