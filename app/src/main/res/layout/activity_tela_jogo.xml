@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="170dp"
-                android:text="Nivel: "
+                android:text="Nivel:   "
                 android:textSize="24sp" />
         </LinearLayout>
 

@@ -106,6 +106,7 @@ public class TelaCadastro extends AppCompatActivity implements View.OnClickListe
             int nivel = calcularNivel(texto);
             palavra1.setNivel(nivel);
 
+
             // 5. Salva de fato no banco de dados (Apenas UMA vez)
             bd.salvarPalavra(palavra1);
 

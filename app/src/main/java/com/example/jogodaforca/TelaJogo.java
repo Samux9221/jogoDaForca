@@ -25,8 +25,8 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
 
     private ImageView imagem;
     private ArrayList<Integer> listaImagens, listaIdsButtons;
-    private ArrayList<Palavra> listaPalavras;
-    private int indiceListaImagens, contaErro, contaAcerto;
+    private ArrayList<Palavra> listaPalavras, listaFacil, listaMedia, listaDificil, listaPalavraLocal;
+    private int indiceListaImagens, contaErro, contaAcerto, vitoria, nivel;
     private TextView texto, textAcertos, textErros, textNivel;
     private String palavra;
     private Button btnDica;
@@ -56,6 +56,9 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
         /* --- --- */
 
         listaPalavras = new ArrayList<Palavra>();
+        listaFacil = new ArrayList<Palavra>();
+        listaMedia = new ArrayList<Palavra>();
+        listaDificil = new ArrayList<Palavra>();
 
         Bd bancoDeDados = new Bd(this);
 
@@ -122,21 +125,52 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
             b.setEnabled(true);
 
         }
-        iniciarJogo();
+
+        /* Aqui vamos percorrer toda a listaPalavra para dividir em 3 listas, de acordo com o nivel de cada uma delas */
+        int b = 0;
+        while(b < listaPalavras.size()){
+
+            Palavra palavraAtual = listaPalavras.get(b);
+
+            if(palavraAtual.getNivel() == 1){
+                listaFacil.add(palavraAtual);
+            }
+            else if(palavraAtual.getNivel() == 2){
+                listaMedia.add(palavraAtual);
+            }
+            else if(palavraAtual.getNivel() == 3){
+                listaDificil.add(palavraAtual);
+            }
+            b++;
+        }
+
+        iniciarJogo(verificaNivel());
     }
 
     //metodo de sorteioDasPalavras
     public String sorteiaPalavra(){
 
         //embaralhando a lista, não sabemos mais a ordem
-        Collections.shuffle(listaPalavras);
+        Collections.shuffle(listaPalavraLocal);
 
-        return listaPalavras.get(0).getPalavraDigitada().toUpperCase(); //garantindo que a palavra sorteada esteja com letra maiúscula
+        return listaPalavraLocal.get(0).getPalavraDigitada().toUpperCase(); //garantindo que a palavra sorteada esteja com letra maiúscula
     }
 
     //metodo de iniciar jogo
-    //metodo de iniciar jogo
-    public void iniciarJogo(){
+    public void iniciarJogo(int nivel){
+
+        listaPalavraLocal = new ArrayList<Palavra>();
+
+        if(nivel == 1){
+            listaPalavraLocal = listaFacil;
+        }
+        else if(nivel == 2){
+            listaPalavraLocal = listaMedia;
+        }
+        else if(nivel == 3){
+            listaPalavraLocal = listaDificil;
+        }
+
         //percorrendo toda a lista de Ids e tornando eles sensiveis ao toque
         for(int j = 0; j < listaIdsButtons.size(); j++){
             Button b = findViewById(listaIdsButtons.get(j));
@@ -144,7 +178,7 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
         }
 
         // 1. CORREÇÃO: Se estiver vazio, mostra o alerta e PARA o código aqui com o 'return'
-        if (listaPalavras.isEmpty()) {
+        if (listaPalavraLocal.isEmpty()) {
             AlertDialog.Builder caixa = new AlertDialog.Builder(this);
             caixa.setTitle("Nenhuma palavra sua!");
             caixa.setMessage("Vamos usar algumas palavras padrão para você brincar agora.\n\nPara personalizar o jogo, vá em: Tela Inicial ➔ Configurações ➔ Cadastrar Palavra.");
@@ -158,11 +192,11 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
                     Palavra p2 = new Palavra();
                     p2.setPalavraDigitada("COMPUTADOR");
 
-                    listaPalavras.add(p1);
-                    listaPalavras.add(p2);
+                    listaPalavraLocal.add(p1);
+                    listaPalavraLocal.add(p2);
 
                     // Agora que a lista foi preenchida, chama o iniciarJogo de verdade
-                    iniciarJogo();
+                    iniciarJogo(1);
                 }
             });
 
@@ -170,11 +204,6 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
             caixa.show();
             return; // IMPORTANTE: Impede o código de continuar para as linhas de baixo antes da hora!
         }
-
-        // O BLOCO 'ELSE' FOI REMOVIDO DAQUI!
-        // Se o código chegou até aqui, significa que a lista NÃO está vazia.
-
-        // 2. CORREÇÃO: Resetando o índice das imagens para a próxima partida funcionar
         indiceListaImagens = 0;
 
         imagem.setImageResource(R.drawable.forca_0_9); //voltando a imagem para o padrão inicial
@@ -189,7 +218,7 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
         //zerando as informações de jogadas no display
         textAcertos.setText(Integer.toString(contaAcerto));
         textErros.setText(Integer.toString(contaErro) + "/" + Integer.toString(listaImagens.size()));
-        textNivel.setText("Nivel " + listaPalavras.get(0).getNivel());
+        textNivel.setText("Nivel: " + listaPalavras.get(0).nivelEmTexto());
 
         estado = new char[palavra.length()]; //inicializando o vetor com a quantidade de caracteres da palavra sorteada
 
@@ -216,12 +245,15 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
             //instanciando a caixa com mensagem para o usuário
             AlertDialog.Builder caixa = new AlertDialog.Builder(this);
 
+            //contando uma vitoria a mais
+            vitoria++;
+
             caixa.setTitle("Você Venceeeeu!!!");
             caixa.setMessage("Deseja jogar novamente?");
             caixa.setPositiveButton("Jogar", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    iniciarJogo();
+                    iniciarJogo(verificaNivel());
                 }
             });
             caixa.show();
@@ -236,11 +268,26 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
             caixa.setPositiveButton("Jogar", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    iniciarJogo();
+                    iniciarJogo(verificaNivel());
                 }
             });
             caixa.show();
         }
+    }
+
+    public int verificaNivel(){
+
+        if(vitoria >= 0 && vitoria <= 3){
+            return 1; //nivel facil
+        }
+        else if(vitoria <= 6){
+            return 2; //nivel medio
+        }
+        else if(vitoria > 6){
+            return 3; //nivel dificil
+        }
+
+        return 0;
     }
 
     //esse metodo serve para formatar os "_" e deixá-los organizados

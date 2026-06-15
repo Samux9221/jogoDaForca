@@ -36,4 +36,21 @@ public class Palavra {
         this.nivel = nivel;
     }
 
+    // Alterado para String, pois o objetivo é retornar texto!
+    public String nivelEmTexto() {
+
+        // Como o metodo está dentro da classe Palavra, usamos o getNivel() direto dela
+        if (getNivel() == 1) {
+            return "Fácil";
+        }
+        else if (getNivel() == 2) {
+            return "Médio";
+        }
+        else if (getNivel() == 3) {
+            return "Difícil";
+        }
+
+        return "Não definido";
+    }
+
 }
