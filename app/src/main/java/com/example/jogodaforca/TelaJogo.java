@@ -26,13 +26,16 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
     private ImageView imagem;
     private ArrayList<Integer> listaImagens, listaIdsButtons;
     private ArrayList<Palavra> listaPalavras, listaFacil, listaMedia, listaDificil, listaPalavraLocal;
-    private int indiceListaImagens, contaErro, contaAcerto, vitoria, nivel;
-    private TextView texto, textAcertos, textErros, textNivel;
+    private int indiceListaImagens, contaErro, contaAcerto, vitoria, nivel, pontuacaoTotal;
+    private TextView texto, textAcertos, textErros, textNivel, textCategoria, textPontuacao;
     private String palavra;
     private Button btnDica;
     private char[] estado;
-
+    private static final String PREF_NAME = "JogoPrefs";
+    private static final String KEY_VITORIAS = "total_vitorias";
+    private static final String KEY_PONTUACAO = "total_pontos";
     private Bd bancoDeDados;
+    private Palavra palavraAtualObj;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -87,7 +90,9 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
 
         textAcertos = findViewById(R.id.textAcertos);
         textErros = findViewById(R.id.textErros);
-        textNivel = findViewById(R.id.textView10);
+        textNivel = findViewById(R.id.textView11);
+        textCategoria = findViewById(R.id.textView10);
+        textPontuacao = findViewById(R.id.textView9);
 
         //inicializando a lista de Ids de button e adicionando na lista a referencia de numero inteiro da classe R de cada um dos buttons
         listaIdsButtons = new ArrayList<Integer>();
@@ -144,6 +149,7 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
             b++;
         }
 
+        carregarVitoria();
         iniciarJogo(verificaNivel());
     }
 
@@ -160,6 +166,7 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
     public void iniciarJogo(int nivel){
 
         listaPalavraLocal = new ArrayList<Palavra>();
+
 
         if(nivel == 1){
             listaPalavraLocal = listaFacil;
@@ -218,7 +225,9 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
         //zerando as informações de jogadas no display
         textAcertos.setText(Integer.toString(contaAcerto));
         textErros.setText(Integer.toString(contaErro) + "/" + Integer.toString(listaImagens.size()));
-        textNivel.setText("Nivel: " + listaPalavras.get(0).nivelEmTexto());
+        textNivel.setText("\uD83D\uDD25 Nivel: " + listaPalavras.get(0).nivelEmTexto());
+        textPontuacao.setText("⭐ Pontos:  " + pontuacaoTotal);
+        textCategoria.setText("\uD83D\uDCDA Categoria: " + listaPalavraLocal.get(0).getCategoria());
 
         estado = new char[palavra.length()]; //inicializando o vetor com a quantidade de caracteres da palavra sorteada
 
@@ -228,6 +237,31 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
 
         //ajustando para o texto com os "_" ficarem bem espaçadas
         atualizaTexto();
+    }
+
+    //metodos referentes ao armazenamento permanente e localmente no celular
+    private void salvarVitoria() {
+        getSharedPreferences(PREF_NAME, MODE_PRIVATE)
+                .edit()
+                .putInt(KEY_VITORIAS, vitoria)
+                .apply();
+    }
+
+    private void carregarVitoria() {
+        vitoria = getSharedPreferences(PREF_NAME, MODE_PRIVATE)
+                .getInt(KEY_VITORIAS, 0);
+    }
+
+    private void salvarPontos() {
+        getSharedPreferences(PREF_NAME, MODE_PRIVATE)
+                .edit()
+                .putInt(KEY_PONTUACAO, pontuacaoTotal)
+                .apply();
+    }
+
+    private void carregarPontos() {
+        vitoria = getSharedPreferences(PREF_NAME, MODE_PRIVATE)
+                .getInt(KEY_PONTUACAO, 0);
     }
 
     public void verificaSeTerminou(){
@@ -242,11 +276,25 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
 
         //se verifica estiver false, jogo ganho
         if(!verifica){
+
+            // cada erro custa 1 imagem, se sobrou imagem, ele ganha bônus
+            int tentativasSobrantes = (listaImagens.size() - contaErro);
+            int pontosDaRodada = 100 + (tentativasSobrantes * 10);
+
+            // Se ele usou dica (verifique uma flag se quiser)
+            // pontosDaRodada -= 20;
+
+            pontuacaoTotal += pontosDaRodada;
+            salvarPontos();
+            //mostrar mensagem de quantos pontos foram totalizados
+            Toast.makeText(this, "Você ganhou " + pontosDaRodada + " pontos!", Toast.LENGTH_LONG).show();
+
             //instanciando a caixa com mensagem para o usuário
             AlertDialog.Builder caixa = new AlertDialog.Builder(this);
 
             //contando uma vitoria a mais
             vitoria++;
+            salvarVitoria();
 
             caixa.setTitle("Você Venceeeeu!!!");
             caixa.setMessage("Deseja jogar novamente?");
@@ -360,7 +408,6 @@ public class TelaJogo extends AppCompatActivity implements View.OnClickListener 
         //tenho que passar como parametro char
         verificaLetra(letraApertada);
         b.setEnabled(false);
-
 
     }
 }

@@ -111,6 +111,20 @@
                 android:layout_height="match_parent">
 
                 <RadioButton
+                    android:id="@+id/radioButton6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Geral"
+                    android:textSize="20sp" />
+
+                <RadioButton
+                    android:id="@+id/radioButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Objeto"
+                    android:textSize="20sp" />
+
+                <RadioButton
                     android:id="@+id/radioButton1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
